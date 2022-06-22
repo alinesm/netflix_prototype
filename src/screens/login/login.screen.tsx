@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import React, {
   useCallback, useState, useEffect, ChangeEvent,
 } from 'react';
@@ -46,8 +45,10 @@ export default function Form() {
       });
 
       await schema.validate(data);
+
       resetError('');
-      dispatch(userSlice.actions.setData({}));
+
+      dispatch(userSlice.actions.authentication(data));
     } catch (yupError: unknown) {
       setError((yupError as Error).errors[0]);
     }
