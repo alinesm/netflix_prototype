@@ -1,8 +1,10 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import userService from 'services/user/user';
-import { AuthErrorMessage, AuthResponse, AuthPayload } from 'services/user/user.type';
+import { AuthResponse, AuthPayload, ErrorMessageEnum } from 'services/user/user.type';
+import { AxiosError } from 'axios';
 import userSlice, { initialState } from './user.slice';
+import { USER_TOKEN_COOKIE } from './user.type';
 
 function* authentication(action: PayloadAction<AuthPayload>) {
   try {
@@ -10,8 +12,12 @@ function* authentication(action: PayloadAction<AuthPayload>) {
 
     yield put(userSlice.actions.setData(response.data));
     yield put(userSlice.actions.setError(initialState.error));
+    localStorage.setItem(USER_TOKEN_COOKIE, response.data.token);
   } catch (expection) {
-    yield put(userSlice.actions.setError(AuthErrorMessage.UNREACHABLE_AUTHENTICATION));
+    // @ts-ignore
+    const { response: { data } } = expection as AxiosError;
+    // @ts-ignore
+    yield put(userSlice.actions.setError(ErrorMessageEnum[data.message]));
   }
 }
 

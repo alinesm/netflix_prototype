@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useState, useEffect, ChangeEvent,
+  useCallback, useState, ChangeEvent, useEffect,
 } from 'react';
 import { Grid } from '@mui/material';
 import * as yup from 'yup';
@@ -8,8 +8,11 @@ import Input from 'components/input/input';
 import Button from 'components/button/button';
 import FormError from 'components/form-error/form-error';
 import userSlice from 'store/user/user.slice';
-import { authenticated } from 'store/user/user.selector';
+import { errorSelector, tokenSelector } from 'store/user/user.selector';
 import { Error } from 'types/yup';
+import { MOVIES_LIST_URL } from 'screens/movies-list/movies-list.type';
+import { USER_TOKEN_COOKIE } from 'store/user/user.type';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Logo, Wrapper } from './login.styled';
 
 export default function Form() {
@@ -21,7 +24,10 @@ export default function Form() {
   const [error, setError] = useState('');
 
   const dispatch = useDispatch();
-  const userAuthenticated = useSelector(authenticated);
+  const token = useSelector(tokenSelector);
+  const userError = useSelector(errorSelector);
+  const navigate = useNavigate();
+  const from = useLocation();
 
   const handleChange = useCallback(
     ({ target } : ChangeEvent<HTMLInputElement>) => {
@@ -56,10 +62,24 @@ export default function Form() {
 
   useEffect(
     () => {
-      console.log(userAuthenticated);
+      if (token) {
+        navigate(MOVIES_LIST_URL, {
+          state: { from },
+        });
+      }
     },
-    [userAuthenticated],
+    [token],
   );
+
+  useEffect(() => {
+    const localToken = localStorage.getItem(USER_TOKEN_COOKIE);
+
+    if (localToken) {
+      dispatch(userSlice.actions.setData({
+        token: localToken,
+      }));
+    }
+  }, []);
 
   return (
     <Wrapper container alignContent="center" justifyContent="center">
@@ -77,7 +97,7 @@ export default function Form() {
           placeholder="Senha"
           onChange={handleChange}
         />
-        <FormError message={error} />
+        <FormError message={error || userError} />
         <Button onClick={handleSend}>Entrar</Button>
       </Grid>
     </Wrapper>
