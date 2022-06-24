@@ -21,6 +21,13 @@ function* authentication(action: PayloadAction<AuthPayload>) {
   }
 }
 
-export default function* userSaga() {
-  yield takeLatest('user/authentication', authentication);
+function* sanitizeValue() {
+  yield put(userSlice.actions.setError(''));
 }
+
+const userSaga = [
+  takeLatest('user/authentication', authentication),
+  takeLatest('user/cart', sanitizeValue),
+];
+
+export default userSaga;
