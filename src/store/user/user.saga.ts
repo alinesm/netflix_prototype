@@ -17,17 +17,20 @@ function* authentication(action: PayloadAction<AuthPayload>) {
     // @ts-ignore
     const { response: { data } } = expection as AxiosError;
     // @ts-ignore
-    yield put(userSlice.actions.setError(ErrorMessageEnum[data.message]));
+    yield put(userSlice.actions.setError(ErrorMessageEnum[data?.message] || ''));
   }
 }
 
-function* sanitizeValue() {
-  yield put(userSlice.actions.setError(''));
+function* logoff() {
+  const { data } = userSlice.getInitialState();
+
+  yield put(userSlice.actions.setData(data));
+  localStorage.removeItem(USER_TOKEN_COOKIE);
 }
 
 const userSaga = [
   takeLatest('user/authentication', authentication),
-  takeLatest('user/cart', sanitizeValue),
+  takeLatest('user/logoff', logoff),
 ];
 
 export default userSaga;

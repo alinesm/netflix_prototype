@@ -13,6 +13,8 @@ import { GlobalStyles } from 'themes/main/global-styles';
 import ShowsList from 'screens/shows/shows';
 import { SHOWS_URL } from 'screens/shows/shows.type';
 import store from 'store/store/store';
+import Show from 'screens/show/show';
+import { SHOW_URL } from 'screens/show/show.type';
 
 class App extends React.Component<any, any> {
   constructor(props: any) {
@@ -38,6 +40,7 @@ class App extends React.Component<any, any> {
           <Routes>
             <Route element={<Login />} path={LOGIN_URL} />
             <Route element={<Guard><ShowsList /></Guard>} path={SHOWS_URL} />
+            <Route element={(<Guard><Show /></Guard>)} path={SHOW_URL} />
           </Routes>
         </ThemeProvider>
         <p>{this.state.apiResponse}</p>

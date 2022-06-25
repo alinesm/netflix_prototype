@@ -4,7 +4,8 @@ import reducers from './shows.reducer';
 
 const initialState: Shows = {
   data: {
-    list: [],
+    myList: [],
+    list: {},
   },
   settings: {
     loading: false,

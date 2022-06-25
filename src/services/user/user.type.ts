@@ -10,5 +10,5 @@ export type AuthResponse = AxiosResponse<{
 }>;
 
 export const ErrorMessageEnum = {
-  Unauthorized: 'An error occurred on authentication',
+  Unauthorized: 'An error occurred on authentication user',
 };
